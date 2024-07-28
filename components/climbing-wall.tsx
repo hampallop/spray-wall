@@ -1,9 +1,8 @@
 'use client'
-
 import React, { useState, useRef, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { ResetConfirmDialog } from '@/components/reset-confirm-dialog'
 
 const holdStates = ['start', 'next', 'finish'] as const
@@ -16,11 +15,12 @@ interface Hold {
   state: HoldState
 }
 
-export const ClimbingWall: React.FC = () => {
+export const ClimbingWall: React.FC<{
+  isAddingHold: boolean
+  setIsAddingHold: (isAddingHold: boolean) => void
+}> = ({ isAddingHold, setIsAddingHold }) => {
   const [holds, setHolds] = useState<Hold[]>([])
   const [selectedHold, setSelectedHold] = useState<string | null>(null)
-  const [isAddingHold, setIsAddingHold] = useState(false)
-  const [jsonOutput, setJsonOutput] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const [imageDimensions, setImageDimensions] = useState({
@@ -130,12 +130,6 @@ export const ClimbingWall: React.FC = () => {
     setSelectedHold(null)
     setIsAddingHold(false)
     updateURL([])
-  }
-
-  const copyJsonToClipboard = () => {
-    const jsonData = JSON.stringify(holds, null, 2)
-    setJsonOutput(jsonData)
-    navigator.clipboard.writeText(jsonData)
   }
 
   const handleDragStart = (event: React.MouseEvent, holdId: string) => {
@@ -358,13 +352,9 @@ export const ClimbingWall: React.FC = () => {
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2 justify-center">
-        <Button onClick={() => setIsAddingHold(!isAddingHold)}>
-          {isAddingHold ? 'Cancel Add Hold' : 'Add Hold'}
-        </Button>
         <ResetConfirmDialog onConfirm={resetProblem}>
           <Button>Reset Problem</Button>
         </ResetConfirmDialog>
-        <Button onClick={copyJsonToClipboard}>Copy Holds JSON</Button>
         <Button onClick={saveImage}>Save Image</Button>
         <Button onClick={copyLink}>Copy Link</Button>
       </div>
@@ -405,14 +395,6 @@ export const ClimbingWall: React.FC = () => {
               />
             </div>
           )}
-        </div>
-      )}
-      {jsonOutput && (
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold text-center">Holds JSON</h3>
-          <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
-            {jsonOutput}
-          </pre>
         </div>
       )}
     </div>
