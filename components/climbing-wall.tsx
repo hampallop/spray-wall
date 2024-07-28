@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { ResetConfirmDialog } from '@/components/reset-confirm-dialog'
 
 const holdStates = ['start', 'next', 'finish'] as const
 type HoldState = (typeof holdStates)[number]
@@ -360,7 +361,9 @@ export const ClimbingWall: React.FC = () => {
         <Button onClick={() => setIsAddingHold(!isAddingHold)}>
           {isAddingHold ? 'Cancel Add Hold' : 'Add Hold'}
         </Button>
-        <Button onClick={resetProblem}>Reset Problem</Button>
+        <ResetConfirmDialog onConfirm={resetProblem}>
+          <Button>Reset Problem</Button>
+        </ResetConfirmDialog>
         <Button onClick={copyJsonToClipboard}>Copy Holds JSON</Button>
         <Button onClick={saveImage}>Save Image</Button>
         <Button onClick={copyLink}>Copy Link</Button>
